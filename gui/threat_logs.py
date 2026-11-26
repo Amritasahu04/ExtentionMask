@@ -8,7 +8,8 @@ from database.db import (
     search_threat_history,
     get_statistics
 )
-
+from pathlib import Path
+from core.quarantine import quarantine_file
 from gui.theme import *
 
 
@@ -202,6 +203,15 @@ class ThreatLogs(ctk.CTkFrame):
             text="View Details",
             command=self.show_details
         ).pack(side="right", padx=5)
+
+        ctk.CTkButton(
+            footer,
+            text="Quarantine File",
+            fg_color="#C2410C",
+            hover_color="#9A3412",
+            command=self.quarantine_selected
+        ).pack(side="right", padx=5)
+
 
         ctk.CTkButton(
             footer,
@@ -426,6 +436,74 @@ class ThreatLogs(ctk.CTkFrame):
             "Security Incident Details",
             details
         )
+    def quarantine_selected(self):
+
+        selected = self.table.selection()
+
+        if not selected:
+
+            messagebox.showinfo(
+                "Selection Required",
+                "Please select a threat record."
+            )
+            return
+
+        record = next(
+            (
+                item for item in self.records
+                if str(item["id"]) == selected[0]
+            ),
+            None
+        )
+
+        if record is None:
+            return
+
+        path = Path(record["file_path"])
+
+        if not path.is_file():
+
+            messagebox.showwarning(
+                "File Unavailable",
+                "The original file no longer exists "
+                "at its recorded location.\n\n"
+                "It may have been moved, deleted "
+                "or quarantined."
+            )
+            return
+
+        confirmed = messagebox.askyesno(
+            "Quarantine File",
+            f"Quarantine the current file at:\n\n"
+            f"{path}\n\n"
+            "The file will be re-scanned before "
+            "being moved to quarantine.",
+            icon="warning"
+        )
+
+        if not confirmed:
+            return
+
+        try:
+
+            result = quarantine_file(path)
+
+            self.refresh_logs()
+
+            messagebox.showinfo(
+                "Quarantine Successful",
+                f"'{result['filename']}' has been "
+                "successfully quarantined.\n\n"
+                "Open the Quarantine page "
+                "to manage the file."
+            )
+
+        except Exception as error:
+
+            messagebox.showerror(
+                "Quarantine Failed",
+                str(error)
+            )
 
     def export_csv(self):
 

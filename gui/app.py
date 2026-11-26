@@ -8,6 +8,7 @@ from gui.live_monitor import LiveMonitor
 
 from gui.threat_logs import ThreatLogs
 from gui.settings import Settings
+from gui.quarantine_view import QuarantineView
 class ExtensionMaskApp(ctk.CTk):
 
     def __init__(self):
@@ -191,6 +192,84 @@ class ExtensionMaskApp(ctk.CTk):
                     self.content
                 )
 
+            elif page_name == "Quarantine":
+
+                self.pages[page_name] = QuarantineView(
+                    self.content
+                )
+
+            elif page_name == "Settings":
+
+                self.pages[page_name] = Settings(
+                    self.content
+                )
+
+            else:
+
+                self.pages[page_name] = (
+                    self.create_placeholder(page_name)
+                )
+
+        self.current_page = self.pages[page_name]
+
+        if page_name == "Dashboard":
+
+            self.current_page.build_dashboard()
+
+        elif page_name == "Threat Logs":
+
+            self.current_page.refresh_logs()
+
+        elif page_name == "Quarantine":
+
+            self.current_page.refresh_records()
+
+        self.current_page.grid(
+            row=0,
+            column=0,
+            sticky="nsew"
+        )
+
+
+        for name, button in self.nav_buttons.items():
+
+            button.configure(
+                fg_color=(
+                    PRIMARY_COLOR
+                    if name == page_name
+                    else "transparent"
+                )
+            )
+
+        if self.current_page is not None:
+            self.current_page.grid_remove()
+
+        if page_name not in self.pages:
+
+            if page_name == "Dashboard":
+
+                self.pages[page_name] = Dashboard(
+                    self.content
+                )
+
+            elif page_name == "File Scanner":
+
+                self.pages[page_name] = FileScanner(
+                    self.content
+                )
+
+            elif page_name == "Live Monitor":
+
+                self.pages[page_name] = LiveMonitor(
+                    self.content
+                )
+
+            elif page_name == "Threat Logs":
+
+                self.pages[page_name] = ThreatLogs(
+                    self.content
+                )
+
             elif page_name == "Settings":
 
                 self.pages[page_name] = Settings(
@@ -296,7 +375,19 @@ class ExtensionMaskApp(ctk.CTk):
 
             messagebox.showinfo(
                 "Scan in Progress",
-                "Please wait for the current scan to finish."
+                "Please wait for the current scan "
+                "to finish."
+            )
+            return
+
+        quarantine = self.pages.get("Quarantine")
+
+        if quarantine and quarantine.busy:
+
+            messagebox.showinfo(
+                "Operation in Progress",
+                "Please wait for the quarantine "
+                "operation to finish."
             )
             return
 
@@ -304,4 +395,5 @@ class ExtensionMaskApp(ctk.CTk):
             page.destroy()
 
         self.destroy()
+
 
