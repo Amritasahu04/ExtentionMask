@@ -1,6 +1,9 @@
+import time
+
 from pathlib import Path
 
 from core.scanner import scan_file, scan_directory
+from core.monitor import DirectoryMonitor
 
 from database.db import (
     initialize_database,
@@ -38,6 +41,9 @@ def display_result(result):
 
     if "scanned_at" in result:
         print("Scanned At:", result["scanned_at"])
+
+    if "event_type" in result:
+        print("File Event:", result["event_type"])
 
 
 def perform_scan():
@@ -90,6 +96,58 @@ def display_statistics():
     print("Unknown:", stats["unknown"])
 
 
+def start_monitoring():
+    directory = input(
+        "Enter directory to monitor: "
+    ).strip().strip('"')
+
+    if not directory:
+        print("Please enter a directory path.")
+        return
+
+    monitor = DirectoryMonitor()
+
+    try:
+        monitor.start(directory)
+
+        print("\n" + "=" * 50)
+        print("EXTENSIONMASK - LIVE MONITOR")
+        print("=" * 50)
+
+        print("Monitoring:", monitor.directory)
+        print("Status: ACTIVE")
+        print("Press Ctrl+C to stop monitoring.")
+        print("\nWaiting for file activity...\n")
+
+        while monitor.is_running():
+
+            for result in monitor.get_events():
+
+                if "message" in result:
+                    print(
+                        "[ERROR]",
+                        result["filename"],
+                        result["message"]
+                    )
+                    continue
+
+                if (result["risk_score"] or 0) > 0:
+                    print("\n[SECURITY ALERT]")
+                else:
+                    print("\n[FILE ACTIVITY DETECTED]")
+
+                display_result(result)
+
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        print("\nStopping directory monitoring...")
+
+    finally:
+        monitor.stop()
+        print("Monitoring stopped.")
+
+
 def main():
     initialize_database()
 
@@ -102,7 +160,8 @@ def main():
         print("2. View Scan History")
         print("3. View Threat History")
         print("4. View Security Statistics")
-        print("5. Exit")
+        print("5. Start Real-Time Monitoring")
+        print("6. Exit")
 
         choice = input("\nSelect an option: ")
 
@@ -120,13 +179,16 @@ def main():
                 display_statistics()
 
             elif choice == "5":
+                start_monitoring()
+
+            elif choice == "6":
                 print("Exiting ExtensionMask...")
                 break
 
             else:
                 print("Invalid option!")
 
-        except (OSError, ValueError) as error:
+        except (OSError, ValueError, RuntimeError) as error:
             print("Operation failed:", error)
 
 
