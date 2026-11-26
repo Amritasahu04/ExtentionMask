@@ -3,7 +3,6 @@
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue)
 ![Domain](https://img.shields.io/badge/Domain-Cybersecurity-red)
-![Status](https://img.shields.io/badge/Status-In%20Development-orange)
 
 ## Overview
 
