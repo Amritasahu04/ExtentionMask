@@ -20,7 +20,7 @@ class ExtensionMaskApp(ctk.CTk):
         self.title(
             f"{APP_NAME} - File Security Monitor"
         )
-        self.geometry("1200x750")
+        self.geometry("1280x800")
         self.minsize(1000, 650)
 
         self.configure(fg_color=BG_COLOR)

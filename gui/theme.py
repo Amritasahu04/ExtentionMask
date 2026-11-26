@@ -37,3 +37,88 @@ SEVERITY_COLORS = {
     "Critical": DANGER_COLOR,
     "Unknown": TEXT_SECONDARY
 }
+
+# ==========================================
+# ExtensionMask - Global Design System
+# ==========================================
+
+
+# Application backgrounds
+
+BG_COLOR = "#0F172A"
+SIDEBAR_COLOR = "#111827"
+CARD_COLOR = "#1E293B"
+BORDER_COLOR = "#334155"
+INPUT_COLOR = "#0F172A"
+HOVER_COLOR = "#263449"
+
+
+# Primary accent colours
+
+PRIMARY_COLOR = "#3B82F6"
+PRIMARY_HOVER = "#2563EB"
+
+
+# Text colours
+
+TEXT_PRIMARY = "#F1F5F9"
+TEXT_SECONDARY = "#94A3B8"
+TEXT_MUTED = "#64748B"
+
+
+# Security status colours
+
+SUCCESS_COLOR = "#22C55E"
+WARNING_COLOR = "#EAB308"
+DANGER_COLOR = "#EF4444"
+
+CRITICAL_COLOR = "#EF4444"
+HIGH_COLOR = "#F97316"
+MEDIUM_COLOR = "#EAB308"
+LOW_COLOR = "#38BDF8"
+UNKNOWN_COLOR = "#94A3B8"
+
+
+# Severity mapping
+
+SEVERITY_COLORS = {
+    "Critical": CRITICAL_COLOR,
+    "High": HIGH_COLOR,
+    "Medium": MEDIUM_COLOR,
+    "Low": LOW_COLOR,
+    "None": SUCCESS_COLOR,
+    "Unknown": UNKNOWN_COLOR
+}
+
+
+# Typography
+
+FONT_FAMILY = "Segoe UI"
+
+FONT_TITLE = (FONT_FAMILY, 28, "bold")
+FONT_SUBTITLE = (FONT_FAMILY, 13)
+FONT_HEADING = (FONT_FAMILY, 18, "bold")
+FONT_BODY = (FONT_FAMILY, 13)
+FONT_SMALL = (FONT_FAMILY, 11)
+FONT_STAT = (FONT_FAMILY, 32, "bold")
+
+FONT_BUTTON = (FONT_FAMILY, 13, "bold")
+FONT_NAV = (FONT_FAMILY, 14)
+FONT_LOGO = (FONT_FAMILY, 23, "bold")
+FONT_MONO = ("Consolas", 12)
+
+
+# Layout and spacing
+
+CARD_RADIUS = 12
+BUTTON_RADIUS = 8
+INPUT_RADIUS = 8
+
+PAGE_PADDING = 24
+CARD_PADDING = 20
+SECTION_GAP = 20
+
+BUTTON_HEIGHT = 36
+INPUT_HEIGHT = 36
+SIDEBAR_WIDTH = 230
+TABLE_ROW_HEIGHT = 36
