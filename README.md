@@ -4,11 +4,14 @@
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 ![Domain](https://img.shields.io/badge/Domain-Cybersecurity-red)
+<<<<<<< HEAD
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D4)
 ![Database](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite)
 ![GUI](https://img.shields.io/badge/GUI-CustomTkinter-7C3AED)
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
+=======
+>>>>>>> 32d008f73ec94d7cbffaafc45f44d2c389e38b62
 
 ## Overview
 
