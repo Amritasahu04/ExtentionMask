@@ -46,7 +46,9 @@ class FileScanner(ctk.CTkFrame):
         panel = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         panel.pack(fill="x", pady=(0, 15))
 
@@ -71,6 +73,9 @@ class FileScanner(ctk.CTkFrame):
 
         self.file_button = ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Select File",
             command=self.select_file
         )
@@ -80,6 +85,9 @@ class FileScanner(ctk.CTkFrame):
 
         self.folder_button = ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Select Folder",
             command=self.select_folder
         )
@@ -87,6 +95,9 @@ class FileScanner(ctk.CTkFrame):
 
         self.scan_button = ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Start Scan",
             fg_color=PRIMARY_COLOR,
             hover_color=PRIMARY_HOVER,
@@ -130,7 +141,9 @@ class FileScanner(ctk.CTkFrame):
             card = ctk.CTkFrame(
                 stats,
                 fg_color=CARD_COLOR,
-                corner_radius=10
+                corner_radius=CARD_RADIUS,
+                border_width=1,
+                border_color=BORDER_COLOR
             )
             card.pack(
                 side="left",
@@ -160,7 +173,9 @@ class FileScanner(ctk.CTkFrame):
         table_frame = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         table_frame.pack(
             fill="both", expand=True
@@ -178,6 +193,9 @@ class FileScanner(ctk.CTkFrame):
 
         ctk.CTkButton(
             table_frame,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="View File Details",
             command=self.show_details
         ).pack(
@@ -194,7 +212,7 @@ class FileScanner(ctk.CTkFrame):
             background=CARD_COLOR,
             foreground=TEXT_PRIMARY,
             fieldbackground=CARD_COLOR,
-            rowheight=32,
+            rowheight=TABLE_ROW_HEIGHT,
             borderwidth=0,
             font=FONT_BODY
         )
@@ -209,8 +227,9 @@ class FileScanner(ctk.CTkFrame):
         style.map(
             "Scanner.Treeview",
             background=[
-                ("selected", PRIMARY_HOVER)
-            ]
+                ("selected", ACTIVE_NAV_COLOR)
+            ],
+            foreground=[("selected", TEXT_PRIMARY)]
         )
 
         columns = (

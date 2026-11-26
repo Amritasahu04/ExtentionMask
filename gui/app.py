@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from config import APP_NAME, APP_VERSION
+from config import APP_NAME, APP_VERSION, ASSETS_DIR
 from gui.theme import *
 from gui.dashboard import Dashboard
 from gui.file_scanner import FileScanner
@@ -24,6 +24,12 @@ class ExtensionMaskApp(ctk.CTk):
         self.minsize(1000, 650)
 
         self.configure(fg_color=BG_COLOR)
+        icon_path = ASSETS_DIR / "icons" / "extensionmask.ico"
+        if icon_path.is_file():
+            try:
+                self.iconbitmap(str(icon_path))
+            except Exception:
+                pass
 
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -42,7 +48,7 @@ class ExtensionMaskApp(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(
             self,
-            width=220,
+            width=SIDEBAR_WIDTH,
             fg_color=SIDEBAR_COLOR,
             corner_radius=0
         )
@@ -62,8 +68,8 @@ class ExtensionMaskApp(ctk.CTk):
         ctk.CTkLabel(
             self.sidebar,
             text="ExtensionMask",
-            font=(FONT_FAMILY, 22, "bold"),
-            text_color=PRIMARY_COLOR
+            font=FONT_LOGO,
+            text_color=TEXT_PRIMARY
         ).grid(
             row=0, column=0,
             padx=15, pady=(30, 5)
@@ -105,7 +111,7 @@ class ExtensionMaskApp(ctk.CTk):
                 height=42,
                 corner_radius=8,
                 anchor="w",
-                font=FONT_BODY,
+                font=FONT_NAV,
                 fg_color="transparent",
                 hover_color=BORDER_COLOR,
                 text_color=TEXT_PRIMARY,
@@ -141,7 +147,7 @@ class ExtensionMaskApp(ctk.CTk):
         )
         self.content.grid(
             row=0, column=1,
-            sticky="nsew", padx=25, pady=20
+            sticky="nsew", padx=PAGE_PADDING, pady=SECTION_GAP
         )
 
         self.content.grid_columnconfigure(
@@ -152,193 +158,39 @@ class ExtensionMaskApp(ctk.CTk):
         )
 
     def show_page(self, page_name):
-
         for name, button in self.nav_buttons.items():
-
+            active = name == page_name
             button.configure(
-                fg_color=(
-                    PRIMARY_COLOR
-                    if name == page_name
-                    else "transparent"
-                )
+                fg_color=ACTIVE_NAV_COLOR if active else "transparent",
+                text_color=ACTIVE_NAV_TEXT if active else TEXT_SECONDARY,
+                font=FONT_BUTTON if active else FONT_NAV
             )
 
         if self.current_page is not None:
             self.current_page.grid_remove()
 
-        if page_name not in self.pages:
-
+        factories = {
+            "Dashboard": Dashboard,
+            "File Scanner": FileScanner,
+            "Live Monitor": LiveMonitor,
+            "Threat Logs": ThreatLogs,
+            "Quarantine": QuarantineView,
+            "Settings": Settings
+        }
+        existing = page_name in self.pages
+        if not existing:
+            factory = factories.get(page_name)
+            self.pages[page_name] = (factory(self.content) if factory
+                                     else self.create_placeholder(page_name))
+        self.current_page = self.pages[page_name]
+        if existing:
             if page_name == "Dashboard":
-
-                self.pages[page_name] = Dashboard(
-                    self.content
-                )
-
-            elif page_name == "File Scanner":
-
-                self.pages[page_name] = FileScanner(
-                    self.content
-                )
-
-            elif page_name == "Live Monitor":
-
-                self.pages[page_name] = LiveMonitor(
-                    self.content
-                )
-
+                self.current_page.build_dashboard()
             elif page_name == "Threat Logs":
-
-                self.pages[page_name] = ThreatLogs(
-                    self.content
-                )
-
+                self.current_page.refresh_logs()
             elif page_name == "Quarantine":
-
-                self.pages[page_name] = QuarantineView(
-                    self.content
-                )
-
-            elif page_name == "Settings":
-
-                self.pages[page_name] = Settings(
-                    self.content
-                )
-
-            else:
-
-                self.pages[page_name] = (
-                    self.create_placeholder(page_name)
-                )
-
-        self.current_page = self.pages[page_name]
-
-        if page_name == "Dashboard":
-
-            self.current_page.build_dashboard()
-
-        elif page_name == "Threat Logs":
-
-            self.current_page.refresh_logs()
-
-        elif page_name == "Quarantine":
-
-            self.current_page.refresh_records()
-
-        self.current_page.grid(
-            row=0,
-            column=0,
-            sticky="nsew"
-        )
-
-
-        for name, button in self.nav_buttons.items():
-
-            button.configure(
-                fg_color=(
-                    PRIMARY_COLOR
-                    if name == page_name
-                    else "transparent"
-                )
-            )
-
-        if self.current_page is not None:
-            self.current_page.grid_remove()
-
-        if page_name not in self.pages:
-
-            if page_name == "Dashboard":
-
-                self.pages[page_name] = Dashboard(
-                    self.content
-                )
-
-            elif page_name == "File Scanner":
-
-                self.pages[page_name] = FileScanner(
-                    self.content
-                )
-
-            elif page_name == "Live Monitor":
-
-                self.pages[page_name] = LiveMonitor(
-                    self.content
-                )
-
-            elif page_name == "Threat Logs":
-
-                self.pages[page_name] = ThreatLogs(
-                    self.content
-                )
-
-            elif page_name == "Settings":
-
-                self.pages[page_name] = Settings(
-                    self.content
-                )
-
-            else:
-
-                self.pages[page_name] = (
-                    self.create_placeholder(page_name)
-                )
-
-        self.current_page = self.pages[page_name]
-
-        if page_name == "Dashboard":
-            self.current_page.build_dashboard()
-
-        elif page_name == "Threat Logs":
-            self.current_page.refresh_logs()
-
-        self.current_page.grid(
-            row=0,
-            column=0,
-            sticky="nsew"
-        )
-
-
-        # Hide the previous page instead of destroying it
-        if self.current_page is not None:
-            self.current_page.grid_remove()
-
-        # Create page only when required
-        if page_name not in self.pages:
-
-            if page_name == "Dashboard":
-
-                self.pages[page_name] = Dashboard(
-                    self.content
-                )
-
-            elif page_name == "File Scanner":
-
-                self.pages[page_name] = FileScanner(
-                    self.content
-                )
-
-            elif page_name == "Live Monitor":
-
-                self.pages[page_name] = LiveMonitor(
-                    self.content
-                )
-
-            else:
-
-                self.pages[page_name] = (
-                    self.create_placeholder(page_name)
-                )
-
-        self.current_page = self.pages[page_name]
-
-        # Refresh dashboard whenever it is opened
-        if page_name == "Dashboard":
-            self.current_page.build_dashboard()
-
-        self.current_page.grid(
-            row=0,
-            column=0,
-            sticky="nsew"
-        )
+                self.current_page.refresh_records()
+        self.current_page.grid(row=0, column=0, sticky="nsew")
 
     def create_placeholder(self, page_name):
 

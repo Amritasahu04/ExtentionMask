@@ -82,7 +82,9 @@ class Settings(ctk.CTkScrollableFrame):
         monitor_card = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         monitor_card.pack(
             fill="x", pady=(0, 20)
@@ -188,7 +190,9 @@ class Settings(ctk.CTkScrollableFrame):
         about_card = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         about_card.pack(
             fill="x", pady=(0, 20)
@@ -249,12 +253,18 @@ class Settings(ctk.CTkScrollableFrame):
 
         ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Save Settings",
             command=self.save_preferences
         ).pack(side="right", padx=5)
 
         ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Restore Defaults",
             fg_color=BORDER_COLOR,
             command=self.restore_defaults
@@ -270,7 +280,9 @@ class Settings(ctk.CTkScrollableFrame):
         notification_card = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
 
         notification_card.pack(

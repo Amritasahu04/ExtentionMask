@@ -1,43 +1,3 @@
-# Application colour palette
-
-BG_COLOR = "#0F172A"
-SIDEBAR_COLOR = "#1E293B"
-CARD_COLOR = "#1E293B"
-BORDER_COLOR = "#334155"
-
-PRIMARY_COLOR = "#3B82F6"
-PRIMARY_HOVER = "#2563EB"
-
-TEXT_PRIMARY = "#F8FAFC"
-TEXT_SECONDARY = "#94A3B8"
-
-SUCCESS_COLOR = "#22C55E"
-WARNING_COLOR = "#EAB308"
-HIGH_COLOR = "#F97316"
-DANGER_COLOR = "#EF4444"
-
-# Typography
-
-FONT_FAMILY = "Segoe UI"
-
-FONT_TITLE = (FONT_FAMILY, 28, "bold")
-FONT_SUBTITLE = (FONT_FAMILY, 14)
-FONT_HEADING = (FONT_FAMILY, 18, "bold")
-FONT_BODY = (FONT_FAMILY, 13)
-FONT_SMALL = (FONT_FAMILY, 11)
-FONT_STAT = (FONT_FAMILY, 32, "bold")
-
-# Threat severity colours
-
-SEVERITY_COLORS = {
-    "None": SUCCESS_COLOR,
-    "Low": SUCCESS_COLOR,
-    "Medium": WARNING_COLOR,
-    "High": HIGH_COLOR,
-    "Critical": DANGER_COLOR,
-    "Unknown": TEXT_SECONDARY
-}
-
 # ==========================================
 # ExtensionMask - Global Design System
 # ==========================================
@@ -55,8 +15,8 @@ HOVER_COLOR = "#263449"
 
 # Primary accent colours
 
-PRIMARY_COLOR = "#3B82F6"
-PRIMARY_HOVER = "#2563EB"
+PRIMARY_COLOR = "#2563EB"
+PRIMARY_HOVER = "#1D4ED8"
 
 
 # Text colours
@@ -122,3 +82,6 @@ BUTTON_HEIGHT = 36
 INPUT_HEIGHT = 36
 SIDEBAR_WIDTH = 230
 TABLE_ROW_HEIGHT = 36
+
+ACTIVE_NAV_COLOR = "#203A60"
+ACTIVE_NAV_TEXT = "#BFDBFE"

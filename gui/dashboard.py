@@ -48,6 +48,9 @@ class Dashboard(ctk.CTkScrollableFrame):
 
         ctk.CTkButton(
             header,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Refresh",
             width=100,
             fg_color=PRIMARY_COLOR,
@@ -113,7 +116,9 @@ class Dashboard(ctk.CTkScrollableFrame):
         distribution = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         distribution.grid(
             row=3, column=0,
@@ -130,7 +135,7 @@ class Dashboard(ctk.CTkScrollableFrame):
         )
 
         levels = [
-            ("Low", stats["low"], SUCCESS_COLOR),
+            ("Low", stats["low"], LOW_COLOR),
             ("Medium", stats["medium"], WARNING_COLOR),
             ("High", stats["high"], HIGH_COLOR),
             ("Critical", stats["critical"], DANGER_COLOR)
@@ -181,7 +186,9 @@ class Dashboard(ctk.CTkScrollableFrame):
         recent = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         recent.grid(
             row=4, column=0,

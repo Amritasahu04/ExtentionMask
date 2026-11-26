@@ -55,7 +55,9 @@ class LiveMonitor(ctk.CTkFrame):
         controls = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         controls.pack(fill="x", pady=(0, 15))
 
@@ -103,6 +105,9 @@ class LiveMonitor(ctk.CTkFrame):
 
         self.browse_button = ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Browse",
             command=self.select_directory
         )
@@ -112,6 +117,9 @@ class LiveMonitor(ctk.CTkFrame):
 
         self.start_button = ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Start Monitoring",
             fg_color="#15803D",
             hover_color="#166534",
@@ -123,6 +131,9 @@ class LiveMonitor(ctk.CTkFrame):
 
         self.stop_button = ctk.CTkButton(
             buttons,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Stop Monitoring",
             fg_color="#DC2626",
             hover_color="#B91C1C",
@@ -166,6 +177,9 @@ class LiveMonitor(ctk.CTkFrame):
 
         ctk.CTkButton(
             feed_header,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Clear Feed",
             width=100,
             fg_color=BORDER_COLOR,
@@ -175,7 +189,9 @@ class LiveMonitor(ctk.CTkFrame):
         self.activity_feed = ctk.CTkScrollableFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         self.activity_feed.pack(
             fill="both", expand=True
@@ -191,7 +207,9 @@ class LiveMonitor(ctk.CTkFrame):
         card = ctk.CTkFrame(
             parent,
             fg_color=CARD_COLOR,
-            corner_radius=10
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         card.pack(
             side="left",

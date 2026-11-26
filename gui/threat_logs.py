@@ -50,6 +50,9 @@ class ThreatLogs(ctk.CTkFrame):
 
         ctk.CTkButton(
             header,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Export CSV",
             command=self.export_csv
         ).pack(side="right")
@@ -78,7 +81,9 @@ class ThreatLogs(ctk.CTkFrame):
             card = ctk.CTkFrame(
                 stats_frame,
                 fg_color=CARD_COLOR,
-                corner_radius=10
+                corner_radius=CARD_RADIUS,
+                border_width=1,
+                border_color=BORDER_COLOR
             )
             card.pack(
                 side="left",
@@ -108,7 +113,9 @@ class ThreatLogs(ctk.CTkFrame):
         filters = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=10
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         filters.pack(fill="x", pady=(0, 15))
 
@@ -160,6 +167,9 @@ class ThreatLogs(ctk.CTkFrame):
 
         ctk.CTkButton(
             filters,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Search",
             width=75,
             command=self.refresh_logs
@@ -167,6 +177,9 @@ class ThreatLogs(ctk.CTkFrame):
 
         ctk.CTkButton(
             filters,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Reset",
             width=65,
             fg_color=BORDER_COLOR,
@@ -177,7 +190,9 @@ class ThreatLogs(ctk.CTkFrame):
         table_frame = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         table_frame.pack(
             fill="both", expand=True
@@ -200,12 +215,18 @@ class ThreatLogs(ctk.CTkFrame):
 
         ctk.CTkButton(
             footer,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="View Details",
             command=self.show_details
         ).pack(side="right", padx=5)
 
         ctk.CTkButton(
             footer,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Quarantine File",
             fg_color="#C2410C",
             hover_color="#9A3412",
@@ -215,6 +236,9 @@ class ThreatLogs(ctk.CTkFrame):
 
         ctk.CTkButton(
             footer,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Refresh",
             width=90,
             fg_color=BORDER_COLOR,
@@ -231,7 +255,7 @@ class ThreatLogs(ctk.CTkFrame):
             background=CARD_COLOR,
             foreground=TEXT_PRIMARY,
             fieldbackground=CARD_COLOR,
-            rowheight=34,
+            rowheight=TABLE_ROW_HEIGHT,
             borderwidth=0,
             font=FONT_BODY
         )
@@ -246,8 +270,9 @@ class ThreatLogs(ctk.CTkFrame):
         style.map(
             "Threat.Treeview",
             background=[
-                ("selected", PRIMARY_HOVER)
-            ]
+                ("selected", ACTIVE_NAV_COLOR)
+            ],
+            foreground=[("selected", TEXT_PRIMARY)]
         )
 
         columns = (
@@ -379,7 +404,8 @@ class ThreatLogs(ctk.CTkFrame):
             )
 
         self.count_label.configure(
-            text=f"{len(self.records)} records shown"
+            text=(f"{len(self.records)} records shown" if self.records
+                  else "No findings match the current filters.")
         )
 
     def reset_filters(self):

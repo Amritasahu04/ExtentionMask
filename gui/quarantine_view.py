@@ -56,6 +56,9 @@ class QuarantineView(ctk.CTkFrame):
 
         ctk.CTkButton(
             header,
+            height=BUTTON_HEIGHT,
+            corner_radius=BUTTON_RADIUS,
+            font=FONT_BUTTON,
             text="Refresh",
             width=100,
             command=self.refresh_records
@@ -86,7 +89,9 @@ class QuarantineView(ctk.CTkFrame):
             card = ctk.CTkFrame(
                 stats,
                 fg_color=CARD_COLOR,
-                corner_radius=12
+                corner_radius=CARD_RADIUS,
+                border_width=1,
+                border_color=BORDER_COLOR
             )
             card.pack(
                 side="left",
@@ -144,7 +149,9 @@ class QuarantineView(ctk.CTkFrame):
         table_frame = ctk.CTkFrame(
             self,
             fg_color=CARD_COLOR,
-            corner_radius=12
+            corner_radius=CARD_RADIUS,
+            border_width=1,
+            border_color=BORDER_COLOR
         )
         table_frame.pack(
             fill="both", expand=True
@@ -195,6 +202,9 @@ class QuarantineView(ctk.CTkFrame):
 
             button = ctk.CTkButton(
                 actions,
+                height=BUTTON_HEIGHT,
+                corner_radius=BUTTON_RADIUS,
+                font=FONT_BUTTON,
                 text=title,
                 fg_color=color,
                 command=command
@@ -218,7 +228,7 @@ class QuarantineView(ctk.CTkFrame):
             background=CARD_COLOR,
             foreground=TEXT_PRIMARY,
             fieldbackground=CARD_COLOR,
-            rowheight=34,
+            rowheight=TABLE_ROW_HEIGHT,
             borderwidth=0,
             font=FONT_BODY
         )
@@ -233,8 +243,9 @@ class QuarantineView(ctk.CTkFrame):
         style.map(
             "Quarantine.Treeview",
             background=[
-                ("selected", PRIMARY_HOVER)
-            ]
+                ("selected", ACTIVE_NAV_COLOR)
+            ],
+            foreground=[("selected", TEXT_PRIMARY)]
         )
 
         columns = (
@@ -423,7 +434,7 @@ class QuarantineView(ctk.CTkFrame):
 
         self.status_label.configure(
             text=(
-                f"{len(records)} records shown | "
+                (f"{len(records)} records shown | " if records else "No matching quarantine records | ") + 
                 f"{stats['needs_review']} need review"
             ),
             text_color=TEXT_SECONDARY
