@@ -3,7 +3,8 @@ import customtkinter as ctk
 from config import APP_NAME, APP_VERSION
 from gui.theme import *
 from gui.dashboard import Dashboard
-
+from gui.file_scanner import FileScanner
+from gui.live_monitor import LiveMonitor
 
 class ExtensionMaskApp(ctk.CTk):
 
@@ -26,11 +27,13 @@ class ExtensionMaskApp(ctk.CTk):
 
         self.nav_buttons = {}
         self.current_page = None
+        self.pages = {}
 
         self.create_sidebar()
         self.create_content_area()
 
         self.show_page("Dashboard")
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def create_sidebar(self):
 
@@ -158,25 +161,46 @@ class ExtensionMaskApp(ctk.CTk):
                 )
             )
 
-        # Remove previous page
+        # Hide the previous page instead of destroying it
         if self.current_page is not None:
-            self.current_page.destroy()
+            self.current_page.grid_remove()
 
-        # Load selected page
+        # Create page only when required
+        if page_name not in self.pages:
+
+            if page_name == "Dashboard":
+
+                self.pages[page_name] = Dashboard(
+                    self.content
+                )
+
+            elif page_name == "File Scanner":
+
+                self.pages[page_name] = FileScanner(
+                    self.content
+                )
+
+            elif page_name == "Live Monitor":
+
+                self.pages[page_name] = LiveMonitor(
+                    self.content
+                )
+
+            else:
+
+                self.pages[page_name] = (
+                    self.create_placeholder(page_name)
+                )
+
+        self.current_page = self.pages[page_name]
+
+        # Refresh dashboard whenever it is opened
         if page_name == "Dashboard":
-
-            self.current_page = Dashboard(
-                self.content
-            )
-
-        else:
-
-            self.current_page = (
-                self.create_placeholder(page_name)
-            )
+            self.current_page.build_dashboard()
 
         self.current_page.grid(
-            row=0, column=0,
+            row=0,
+            column=0,
             sticky="nsew"
         )
 
@@ -204,3 +228,23 @@ class ExtensionMaskApp(ctk.CTk):
         ).pack(expand=True)
 
         return frame
+
+    def on_close(self):
+
+        from tkinter import messagebox
+
+        scanner = self.pages.get("File Scanner")
+
+        if scanner and scanner.scanning:
+
+            messagebox.showinfo(
+                "Scan in Progress",
+                "Please wait for the current scan to finish."
+            )
+            return
+
+        for page in self.pages.values():
+            page.destroy()
+
+        self.destroy()
+
