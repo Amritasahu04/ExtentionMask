@@ -172,3 +172,52 @@ def get_statistics():
         )
 
     return statistics
+
+def search_threat_history(
+    search="",
+    severity="All Severities",
+    source="All Sources",
+    limit=None
+):
+    query = """
+        SELECT * FROM scan_history
+        WHERE risk_score > 0
+    """
+
+    parameters = []
+
+    if search.strip():
+        keyword = f"%{search.strip()}%"
+
+        query += """
+            AND (
+                filename LIKE ?
+                OR file_path LIKE ?
+                OR findings LIKE ?
+            )
+        """
+
+        parameters.extend([
+            keyword, keyword, keyword
+        ])
+
+    if severity != "All Severities":
+        query += " AND severity = ?"
+        parameters.append(severity)
+
+    if source != "All Sources":
+        query += " AND scan_source = ?"
+        parameters.append(source)
+
+    query += " ORDER BY id DESC"
+
+    if limit is not None:
+        query += " LIMIT ?"
+        parameters.append(limit)
+
+    with get_connection() as connection:
+        records = connection.execute(
+            query, parameters
+        ).fetchall()
+
+        return format_records(records)

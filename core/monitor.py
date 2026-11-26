@@ -9,7 +9,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 from core.scanner import scan_file
-from config import DATA_DIR
+from config import DATA_DIR, load_settings
 
 
 class FileMonitorHandler(FileSystemEventHandler):
@@ -20,7 +20,7 @@ class FileMonitorHandler(FileSystemEventHandler):
         self.event_queue = event_queue
         self.pending_files = {}
         self.lock = Lock()
-        self.scan_delay = 2.0
+        self.scan_delay = load_settings()["scan_delay"]
 
         self.ignored_extensions = {
             ".tmp", ".part", ".crdownload"

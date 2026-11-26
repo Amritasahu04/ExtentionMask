@@ -1,1 +1,4 @@
 test_samples/
+
+data/settings.json
+data/settings.tmp

@@ -6,6 +6,12 @@ from tkinter import filedialog, messagebox
 from core.monitor import DirectoryMonitor
 from gui.theme import *
 
+import time
+
+from config import (
+    load_settings,
+    MONITOR_DURATIONS
+)
 
 class LiveMonitor(ctk.CTkFrame):
 
@@ -23,6 +29,8 @@ class LiveMonitor(ctk.CTkFrame):
         self.total_events = 0
         self.flagged_events = 0
         self.poll_id = None
+
+        self.monitor_deadline = None
 
         self.build_ui()
 
@@ -267,10 +275,32 @@ class LiveMonitor(ctk.CTkFrame):
             state="disabled"
         )
 
+        settings = load_settings()
+
+        duration_name = settings["monitor_duration"]
+
+        duration = MONITOR_DURATIONS.get(
+            duration_name
+        )
+
+        self.monitor_deadline = (
+            time.monotonic() + duration
+            if duration is not None
+            else None
+        )
+
         self.add_message(
             f"Monitoring started: {self.monitor.directory}",
             SUCCESS_COLOR
         )
+
+        self.add_message(
+            f"Monitoring duration: {duration_name}",
+            TEXT_SECONDARY
+        )
+
+        self.poll_events()
+
 
         self.poll_events()
 
@@ -281,6 +311,7 @@ class LiveMonitor(ctk.CTkFrame):
             self.poll_id = None
 
         self.monitor.stop()
+        self.monitor_deadline = None
 
         # Display completed events before stopping
         for result in self.monitor.get_events():
@@ -319,6 +350,32 @@ class LiveMonitor(ctk.CTkFrame):
         for result in self.monitor.get_events():
             self.handle_event(result)
 
+        if self.monitor_deadline is not None:
+
+            remaining = (
+                self.monitor_deadline
+                - time.monotonic()
+            )
+
+            if remaining <= 0:
+
+                self.add_message(
+                    "Monitoring duration completed.",
+                    WARNING_COLOR
+                )
+
+                self.stop_monitoring()
+                return
+
+            minutes, seconds = divmod(
+                int(remaining), 60
+            )
+
+            self.status_label.configure(
+                text=f"ACTIVE | {minutes:02d}:{seconds:02d}",
+                text_color=SUCCESS_COLOR
+            )
+
         if self.monitor.is_running():
 
             self.poll_id = self.after(
@@ -327,6 +384,7 @@ class LiveMonitor(ctk.CTkFrame):
 
         else:
             self.stop_monitoring()
+
 
     def handle_event(self, result):
 
