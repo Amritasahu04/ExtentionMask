@@ -10,3 +10,14 @@ data/logs/
 # Local application preferences
 data/settings.json
 data/settings.tmp
+
+# Build artifacts
+build/
+dist/
+
+# Testing artifacts
+.pytest_cache/
+test_samples/
+
+# Release archives
+ExtensionMask-*-Windows.zip
