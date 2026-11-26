@@ -1,0 +1,8 @@
+customtkinter
+watchdog
+filetype
+matplotlib
+Pillow
+plyer
+pytest
+pyinstaller
