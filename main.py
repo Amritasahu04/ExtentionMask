@@ -3,7 +3,7 @@ import customtkinter as ctk
 from config import initialize_directories
 from database.db import initialize_database
 from gui.app import ExtensionMaskApp
-
+from utils.logger import setup_logging
 
 def main():
 
@@ -18,4 +18,5 @@ def main():
 
 
 if __name__ == "__main__":
+    setup_logging()
     main()

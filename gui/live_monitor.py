@@ -1,5 +1,5 @@
 import customtkinter as ctk
-
+from utils.notifications import notification_manager
 from datetime import datetime
 from tkinter import filedialog, messagebox
 
@@ -387,6 +387,8 @@ class LiveMonitor(ctk.CTkFrame):
 
 
     def handle_event(self, result):
+
+        notification_manager.notify_threat(result)
 
         if "message" in result:
 

@@ -33,8 +33,23 @@ SETTINGS_PATH = DATA_DIR / "settings.json"
 
 DEFAULT_SETTINGS = {
     "monitor_duration": "Continuous",
-    "scan_delay": 2.0
+    "scan_delay": 2.0,
+    "notifications_enabled": True,
+    "notification_min_severity": "Medium",
+    "notification_cooldown": 30
 }
+
+NOTIFICATION_SEVERITIES = [
+    "Low",
+    "Medium",
+    "High",
+    "Critical"
+]
+
+MIN_NOTIFICATION_COOLDOWN = 10
+MAX_NOTIFICATION_COOLDOWN = 120
+
+LOG_FILE = LOG_DIR / "extensionmask.log"
 
 MONITOR_DURATIONS = {
     "Continuous": None,
@@ -84,7 +99,34 @@ def load_settings():
     except (ValueError, TypeError):
         settings["scan_delay"] = 2.0
 
+    if not isinstance(
+        settings.get("notifications_enabled"), bool
+    ):
+        settings["notifications_enabled"] = True
+
+    if settings.get(
+        "notification_min_severity"
+    ) not in NOTIFICATION_SEVERITIES:
+
+        settings["notification_min_severity"] = "Medium"
+
+    try:
+
+        cooldown = int(
+            settings.get("notification_cooldown", 30)
+        )
+
+        settings["notification_cooldown"] = max(
+            MIN_NOTIFICATION_COOLDOWN,
+            min(MAX_NOTIFICATION_COOLDOWN, cooldown)
+        )
+
+    except (ValueError, TypeError, OverflowError):
+
+        settings["notification_cooldown"] = 30
+
     return settings
+
 
 
 def save_settings(settings):

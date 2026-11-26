@@ -2,3 +2,11 @@ test_samples/
 
 data/settings.json
 data/settings.tmp
+
+# Application logs
+data/logs/
+*.log
+
+# Local application preferences
+data/settings.json
+data/settings.tmp

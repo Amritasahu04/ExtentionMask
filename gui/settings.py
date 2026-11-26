@@ -1,3 +1,12 @@
+from config import NOTIFICATION_SEVERITIES
+
+from utils.notifications import (
+    apply_notification_settings
+)
+
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 import customtkinter as ctk
 
 from tkinter import messagebox
@@ -33,7 +42,25 @@ class Settings(ctk.CTkScrollableFrame):
         self.delay_var = ctk.DoubleVar(
             value=settings["scan_delay"]
         )
+        notification_settings = load_settings()
 
+        self.notification_enabled_var = ctk.BooleanVar(
+            value=notification_settings[
+                "notifications_enabled"
+            ]
+        )
+
+        self.notification_severity_var = ctk.StringVar(
+            value=notification_settings[
+                "notification_min_severity"
+            ]
+        )
+
+        self.notification_cooldown_var = ctk.DoubleVar(
+            value=notification_settings[
+                "notification_cooldown"
+            ]
+        )
         self.build_ui()
 
     def build_ui(self):
@@ -156,7 +183,7 @@ class Settings(ctk.CTkScrollableFrame):
         ).pack(
             anchor="w", padx=20, pady=(0, 15)
         )
-
+        self.build_notification_card()
         # Application information
         about_card = ctk.CTkFrame(
             self,
@@ -238,6 +265,165 @@ class Settings(ctk.CTkScrollableFrame):
         self.delay_label.configure(
             text=f"{value:.1f} seconds"
         )
+    def build_notification_card(self):
+
+        notification_card = ctk.CTkFrame(
+            self,
+            fg_color=CARD_COLOR,
+            corner_radius=12
+        )
+
+        notification_card.pack(
+            fill="x",
+            pady=(0, 20)
+        )
+
+        ctk.CTkLabel(
+            notification_card,
+            text="Notification Preferences",
+            font=FONT_HEADING,
+            text_color=TEXT_PRIMARY
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=(20, 15)
+        )
+
+        # Enable or disable notifications
+
+        ctk.CTkSwitch(
+            notification_card,
+            text="Enable Desktop Notifications",
+            variable=self.notification_enabled_var,
+            onvalue=True,
+            offvalue=False,
+            font=FONT_BODY,
+            progress_color=PRIMARY_COLOR
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=(0, 5)
+        )
+
+        ctk.CTkLabel(
+            notification_card,
+            text=(
+                "Receive desktop alerts when "
+                "suspicious files are detected."
+            ),
+            font=FONT_SMALL,
+            text_color=TEXT_SECONDARY
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=(0, 20)
+        )
+
+        # Minimum alert severity
+
+        ctk.CTkLabel(
+            notification_card,
+            text="Minimum Alert Severity",
+            font=FONT_BODY,
+            text_color=TEXT_PRIMARY
+        ).pack(
+            anchor="w",
+            padx=20
+        )
+
+        ctk.CTkOptionMenu(
+            notification_card,
+            values=NOTIFICATION_SEVERITIES,
+            variable=self.notification_severity_var,
+            width=180,
+            fg_color=PRIMARY_COLOR,
+            button_color=PRIMARY_COLOR,
+            button_hover_color=PRIMARY_HOVER
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=(8, 5)
+        )
+
+        ctk.CTkLabel(
+            notification_card,
+            text=(
+                "Only threats at or above this "
+                "severity will trigger alerts."
+            ),
+            font=FONT_SMALL,
+            text_color=TEXT_SECONDARY
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=(0, 20)
+        )
+
+        # Notification cooldown
+
+        cooldown_header = ctk.CTkFrame(
+            notification_card,
+            fg_color="transparent"
+        )
+
+        cooldown_header.pack(
+            fill="x",
+            padx=20
+        )
+
+        ctk.CTkLabel(
+            cooldown_header,
+            text="Notification Cooldown",
+            font=FONT_BODY
+        ).pack(side="left")
+
+        self.cooldown_label = ctk.CTkLabel(
+            cooldown_header,
+            text=(
+                f"{int(self.notification_cooldown_var.get())}"
+                " seconds"
+            ),
+            font=FONT_BODY,
+            text_color=PRIMARY_COLOR
+        )
+
+        self.cooldown_label.pack(side="right")
+
+        ctk.CTkSlider(
+            notification_card,
+            from_=10,
+            to=120,
+            number_of_steps=22,
+            variable=self.notification_cooldown_var,
+            command=self.update_cooldown_label,
+            progress_color=PRIMARY_COLOR,
+            button_color=PRIMARY_COLOR,
+            button_hover_color=PRIMARY_HOVER
+        ).pack(
+            fill="x",
+            padx=20,
+            pady=(10, 5)
+        )
+
+        ctk.CTkLabel(
+            notification_card,
+            text=(
+                "Minimum interval between repeated "
+                "alerts for the same file and severity."
+            ),
+            font=FONT_SMALL,
+            text_color=TEXT_SECONDARY
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=(0, 20)
+        )
+
+    def update_cooldown_label(self, value):
+
+        self.cooldown_label.configure(
+            text=f"{int(value)} seconds"
+        )
 
     def save_preferences(self):
 
@@ -251,24 +437,61 @@ class Settings(ctk.CTkScrollableFrame):
         })
 
         try:
+            settings["notifications_enabled"] = (
+                self.notification_enabled_var.get()
+            )
+
+            settings["notification_min_severity"] = (
+                self.notification_severity_var.get()
+            )
+
+            settings["notification_cooldown"] = int(
+                self.notification_cooldown_var.get()
+            )
 
             save_settings(settings)
 
+            apply_notification_settings()
+
+            logger.info(
+                "Application preferences updated"
+            )
+
             messagebox.showinfo(
-                "Settings Saved",
-                "Preferences saved successfully.\n\n"
-                "Monitoring changes apply to the "
-                "next monitoring session."
+                    "Settings Saved",
+                    "Preferences saved successfully.\n\n"
+                    "Monitoring changes apply to the "
+                    "next monitoring session."
             )
 
         except OSError as error:
 
             messagebox.showerror(
-                "Settings Error",
-                str(error)
+                    "Settings Error",
+                    str(error)
             )
 
     def restore_defaults(self):
+
+        self.notification_enabled_var.set(
+            DEFAULT_SETTINGS["notifications_enabled"]
+        )
+
+        self.notification_severity_var.set(
+            DEFAULT_SETTINGS[
+                "notification_min_severity"
+            ]
+        )
+
+        self.notification_cooldown_var.set(
+            DEFAULT_SETTINGS[
+                "notification_cooldown"
+            ]
+        )
+
+        self.update_cooldown_label(
+            self.notification_cooldown_var.get()
+        )
 
         self.duration_var.set(
             DEFAULT_SETTINGS["monitor_duration"]
