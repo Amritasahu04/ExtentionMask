@@ -1,7 +1,13 @@
 from pathlib import Path
-from collections import Counter
 
 from core.scanner import scan_file, scan_directory
+
+from database.db import (
+    initialize_database,
+    get_scan_history,
+    get_threat_history,
+    get_statistics
+)
 
 
 def display_result(result):
@@ -10,6 +16,7 @@ def display_result(result):
     print("Declared Extension:", result["declared_extension"])
     print("Actual File Type:", result["actual_type"])
     print("Status:", result["status"])
+    print("Severity:", result["severity"])
 
     score = result["risk_score"]
 
@@ -18,38 +25,22 @@ def display_result(result):
         f"{score}/100" if score is not None else "Unknown"
     )
 
-    print("Severity:", result["severity"])
-
-    if result["risk_reasons"]:
-        print("Security Findings:")
-
-        for reason in result["risk_reasons"]:
-            print(" -", reason)
-
-
-def display_summary(results):
-    counts = Counter(
-        result["severity"] for result in results
+    findings = result.get(
+        "risk_reasons",
+        result.get("findings", [])
     )
 
-    print("\n" + "=" * 50)
-    print("SECURITY SCAN SUMMARY")
-    print("=" * 50)
+    if findings:
+        print("Security Findings:")
 
-    print("Total Files Scanned:", len(results))
-    print("No Identified Risk:", counts["None"])
-    print("Low Risk:", counts["Low"])
-    print("Medium Risk:", counts["Medium"])
-    print("High Risk:", counts["High"])
-    print("Critical Risk:", counts["Critical"])
-    print("Unknown:", counts["Unknown"])
+        for finding in findings:
+            print(" -", finding)
+
+    if "scanned_at" in result:
+        print("Scanned At:", result["scanned_at"])
 
 
-def main():
-    print("=" * 50)
-    print("EXTENSIONMASK - File Security Scanner")
-    print("=" * 50)
-
+def perform_scan():
     path = input("Enter file or directory path: ")
     path = Path(path.strip().strip('"'))
 
@@ -62,82 +53,81 @@ def main():
         for result in results:
             display_result(result)
 
-        display_summary(results)
+        print("\nTotal Files Scanned:", len(results))
 
     else:
         print("Invalid path!")
 
 
-if __name__ == "__main__":
-    main()
-from pathlib import Path
-from collections import Counter
+def display_history(threats_only=False):
+    if threats_only:
+        records = get_threat_history()
+    else:
+        records = get_scan_history()
 
-from core.scanner import scan_file, scan_directory
+    if not records:
+        print("No records found.")
+        return
 
-
-def display_result(result):
-    print("-" * 50)
-    print("Filename:", result["filename"])
-    print("Declared Extension:", result["declared_extension"])
-    print("Actual File Type:", result["actual_type"])
-    print("Status:", result["status"])
-
-    score = result["risk_score"]
-
-    print(
-        "Risk Score:",
-        f"{score}/100" if score is not None else "Unknown"
-    )
-
-    print("Severity:", result["severity"])
-
-    if result["risk_reasons"]:
-        print("Security Findings:")
-
-        for reason in result["risk_reasons"]:
-            print(" -", reason)
+    for record in records:
+        display_result(record)
 
 
-def display_summary(results):
-    counts = Counter(
-        result["severity"] for result in results
-    )
+def display_statistics():
+    stats = get_statistics()
 
     print("\n" + "=" * 50)
-    print("SECURITY SCAN SUMMARY")
+    print("EXTENSIONMASK - SECURITY STATISTICS")
     print("=" * 50)
 
-    print("Total Files Scanned:", len(results))
-    print("No Identified Risk:", counts["None"])
-    print("Low Risk:", counts["Low"])
-    print("Medium Risk:", counts["Medium"])
-    print("High Risk:", counts["High"])
-    print("Critical Risk:", counts["Critical"])
-    print("Unknown:", counts["Unknown"])
+    print("Total Scans:", stats["total_scans"])
+    print("No Identified Risk:", stats["no_risk"])
+    print("Flagged Scans:", stats["suspicious"])
+    print("Low Risk:", stats["low"])
+    print("Medium Risk:", stats["medium"])
+    print("High Risk:", stats["high"])
+    print("Critical Risk:", stats["critical"])
+    print("Unknown:", stats["unknown"])
 
 
 def main():
-    print("=" * 50)
-    print("EXTENSIONMASK - File Security Scanner")
-    print("=" * 50)
+    initialize_database()
 
-    path = input("Enter file or directory path: ")
-    path = Path(path.strip().strip('"'))
+    while True:
+        print("\n" + "=" * 50)
+        print("EXTENSIONMASK - File Security Scanner")
+        print("=" * 50)
 
-    if path.is_file():
-        display_result(scan_file(path))
+        print("1. Scan File or Directory")
+        print("2. View Scan History")
+        print("3. View Threat History")
+        print("4. View Security Statistics")
+        print("5. Exit")
 
-    elif path.is_dir():
-        results = scan_directory(path)
+        choice = input("\nSelect an option: ")
 
-        for result in results:
-            display_result(result)
+        try:
+            if choice == "1":
+                perform_scan()
 
-        display_summary(results)
+            elif choice == "2":
+                display_history()
 
-    else:
-        print("Invalid path!")
+            elif choice == "3":
+                display_history(threats_only=True)
+
+            elif choice == "4":
+                display_statistics()
+
+            elif choice == "5":
+                print("Exiting ExtensionMask...")
+                break
+
+            else:
+                print("Invalid option!")
+
+        except (OSError, ValueError) as error:
+            print("Operation failed:", error)
 
 
 if __name__ == "__main__":
