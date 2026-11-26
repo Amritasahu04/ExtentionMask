@@ -21,3 +21,45 @@ test_samples/
 
 # Release archives
 ExtensionMask-*-Windows.zip
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Runtime application data
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Testing artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+test_samples/
+
+# Build artifacts
+build/
+dist/
+ExtensionMask-*-Windows.zip
+
+# IDE settings
+.vscode/
+.idea/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Operating system files
+Thumbs.db
+Desktop.ini
+.DS_Store
