@@ -221,3 +221,124 @@ def search_threat_history(
         ).fetchall()
 
         return format_records(records)
+
+def initialize_quarantine_table():
+
+    with get_connection() as connection:
+
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS quarantine_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                scan_id INTEGER,
+                filename TEXT NOT NULL,
+                original_path TEXT NOT NULL,
+                quarantine_path TEXT NOT NULL UNIQUE,
+                sha256 TEXT NOT NULL,
+                file_size INTEGER NOT NULL,
+                risk_score INTEGER,
+                severity TEXT,
+                quarantined_at TEXT NOT NULL,
+                updated_at TEXT,
+                status TEXT DEFAULT 'Quarantined'
+            )
+        """)
+
+
+def save_quarantine_record(record):
+
+    with get_connection() as connection:
+
+        cursor = connection.execute("""
+            INSERT INTO quarantine_history (
+                scan_id,
+                filename,
+                original_path,
+                quarantine_path,
+                sha256,
+                file_size,
+                risk_score,
+                severity,
+                quarantined_at,
+                status
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            record.get("scan_id"),
+            record["filename"],
+            record["original_path"],
+            record["quarantine_path"],
+            record["sha256"],
+            record["file_size"],
+            record.get("risk_score"),
+            record.get("severity"),
+            datetime.now().astimezone().isoformat(
+                timespec="seconds"
+            ),
+            "Pending"
+        ))
+
+        return cursor.lastrowid
+
+
+def get_quarantine_history(active_only=False):
+
+    initialize_quarantine_table()
+
+    query = "SELECT * FROM quarantine_history"
+
+    if active_only:
+        query += " WHERE status = 'Quarantined'"
+
+    query += " ORDER BY id DESC"
+
+    with get_connection() as connection:
+
+        records = connection.execute(
+            query
+        ).fetchall()
+
+        return [dict(record) for record in records]
+
+
+def get_quarantine_record(record_id):
+
+    initialize_quarantine_table()
+
+    with get_connection() as connection:
+
+        record = connection.execute("""
+            SELECT * FROM quarantine_history
+            WHERE id = ?
+        """, (record_id,)).fetchone()
+
+        return dict(record) if record else None
+
+
+def update_quarantine_status(record_id, status):
+
+    allowed_statuses = {
+        "Pending",
+        "Quarantined",
+        "Restoring",
+        "Restored",
+        "Deleting",
+        "Deleted",
+        "Failed"
+    }
+
+    if status not in allowed_statuses:
+        raise ValueError("Invalid quarantine status")
+
+    with get_connection() as connection:
+
+        connection.execute("""
+            UPDATE quarantine_history
+            SET status = ?, updated_at = ?
+            WHERE id = ?
+        """, (
+            status,
+            datetime.now().astimezone().isoformat(
+                timespec="seconds"
+            ),
+            record_id
+        ))
