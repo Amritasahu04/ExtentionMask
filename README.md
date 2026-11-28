@@ -2,6 +2,8 @@
 
 ### File Identity Spoofing Detection and Monitoring System
 
+[![Download for Windows](https://img.shields.io/badge/Download_for_Windows-v1.0.0-0078D4?style=for-the-badge&logo=windows)](https://github.com/Amritasahu04/ExtentionMask/releases/latest/download/ExtensionMask-v1.0.0-Windows.zip)
+
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 ![Domain](https://img.shields.io/badge/Domain-Cybersecurity-red)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D4)
